@@ -1,14 +1,21 @@
 import './hotel.css';
 
+import { useState } from 'react';
+
 import Navbar from '../../components/navbar/Navbar';
 import Header from '../../components/header/Header';
 import MailList from '../../components/mailList/MailList';
 import Footer from '../../components/footer/Footer';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleArrowLeft, faCircleArrowRight, faCircleXmark, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 
 const Hotel = () => { 
+   
+  const [sliderNumber,setSlideNumber] = useState(0);
+  const [open,setOpen] = useState(false);
+
 
   const photos = [
     {
@@ -30,18 +37,41 @@ const Hotel = () => {
       src: "https://cf.bstatic.com/xdata/images/hotel/max1280x900/261707389.jpg?k=52156673f9eb6d5d99d3eed9386491a0465ce6f3b995f005ac71abc192dd5827&o=&hp=1",
     },
   ];
+  const handleOpen = (i)=>{
+    setSlideNumber(i);
+    setOpen(true);
+  }
 
+  const handleMove = (direction) => {
+    let newSlideNumber;
+
+    if (direction === "l") {
+      newSlideNumber = sliderNumber === 0 ? 5 : sliderNumber - 1;
+    } else {
+      newSlideNumber = sliderNumber === 5 ? 0 : sliderNumber + 1;
+    }
+
+    setSlideNumber(newSlideNumber)
+  };
 
   return (
     <div>
       <Navbar />
       <Header type="list" />
       <div className="hotelContainer">
+       {open && <div className="slider">
+          <FontAwesomeIcon className="close" onClick={()=> setOpen(false)} icon={faCircleXmark} />
+          <FontAwesomeIcon icon={faCircleArrowLeft} className="arrow" onClick={()=> handleMove("l")}/>
+          <div className="sliderWrapper">
+            <img src={photos[sliderNumber].src} alt="" className="sliderImg" />
+          </div>
+          <FontAwesomeIcon icon={faCircleArrowRight} className="arrow" onClick={()=> handleMove("r")} />
+        </div>}
         <div className="hotelWrapper">
           <button className="bookNow">Reserve or Book Now</button>
           <h1 className="hotelTitle">Grand Hotel</h1>
           <div className="hotelAddress">
-          <FontAwesomeIcon icon="fa-solid fa-location-arrow" />
+          <FontAwesomeIcon icon={faLocationDot} />
           <span>125 Main Street, NYC</span>
           </div>
           <span className="hotelDistance">
@@ -54,7 +84,7 @@ const Hotel = () => {
           {photos.map((photo, i) => (
               <div className="hotelImgWrapper" key={i}>
                 <img
-                  
+                  onClick={() => handleOpen(i)}
                   src={photo.src}
                   alt=""
                   className="hotelImg"
